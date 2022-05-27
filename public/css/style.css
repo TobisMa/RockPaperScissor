@@ -1,0 +1,24 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.green {
+  color: green;
+}
+
+.blue {
+  color: #0093ff;
+}
+
+.red {
+  color: red;
+}
+
+.orange {
+  color: orange;
+}
+
+.black {
+  color: black;
+}
