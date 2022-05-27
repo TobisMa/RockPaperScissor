@@ -12,12 +12,16 @@ function appendMesssage(msg, color) {
     }
 
     msgList.appendChild(msgElement, null);
+    msgList.scrollTop = msgList.clientHeight - msgList.scrollHeight;
 }
 
 sock.on('connect', () => {
     deactivateButtons();
 })
 sock.on('message', appendMesssage);
+sock.on('resetGame', () => {
+    activateButtons();
+});
 sock.on('opponentFound', () => {
     appendMesssage("Gegner gefunden. Wähle Schere, Stein oder Papier", "blue");
     activateButtons();

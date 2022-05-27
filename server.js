@@ -10,6 +10,8 @@ server.listen(8080, "0.0.0.0");
 
 io = socketio(server);
 
+console.log(`Server running on ${server.address()}`);
+
 const clients = {};
 const waitingForMatch = [];
 const matchUps = {};
@@ -132,5 +134,8 @@ function getWinner(socketId, oppId) {
 
 
 function resetGame(id1, id2) {
-
+    clients[id1]?.emit("resetGame");
+    clients[id1]?.emit("opponentFound");
+    clients[id2]?.emit("resetGame");
+    clients[id2]?.emit("opponentFound");
 }
