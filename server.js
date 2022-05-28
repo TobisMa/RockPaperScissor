@@ -6,12 +6,23 @@ app = express();
 app.use(express.static("public"));
 
 server = http.createServer(app);
-server.listen(8080, "0.0.0.0");
+server.listen(8080, "0.0.0.0", (err) => {
+    if (err !== undefined) {
+        console.error(err);
+    }
+    address = server.address();
+    if (address === null || address == undefined) {
+        console.error("Server address unknown");
+    }
+    else {
+        const host = address?.address === '0.0.0.0' ? require('os')?.hostname()?.toLowerCase() : address.address;
+        const port = address?.port;
+        const protocol = address?.family;
+        console.log(`Server running on http://${host}:${port}/ using ${protocol}`);
+    }
+});
 
 io = socketio(server);
-
-console.log(`Server running on ${server.address()}`);
-
 const clients = {};
 const waitingForMatch = [];
 const matchUps = {};
