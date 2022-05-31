@@ -3,6 +3,7 @@ const sock = io();
 let selected = undefined;
 
 function appendMesssage(msg, color) {
+    console.log(`Adding message ${msg} in ${color}`);
     const msgList = document.querySelector("#message-list");
 
     const msgElement = document.createElement("li");
@@ -15,7 +16,7 @@ function appendMesssage(msg, color) {
     msgList.scrollTop = msgList.clientHeight - msgList.scrollHeight;
 }
 
-sock.on('connect', () => {
+sock.on('connect', () => {  
     deactivateButtons();
 })
 sock.on('message', appendMesssage);

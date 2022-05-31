@@ -2,11 +2,26 @@ const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 
+
+function getLocalIpAddress() {
+    const os = require( 'os' );
+    const networkInterfaces = os.networkInterfaces();
+    console.log(networkInterfaces);
+    const wlanInterfaces = networkInterfaces['WLAN'];
+    let ip = undefined;
+    for (let wlanInterface of wlanInterfaces) {
+        if (wlanInterface.family === "IPv4") {
+            ip = wlanInterface.address;
+        }
+    }
+    return ip === undefined? "127.0.0.1": ip;
+}
+
 app = express();
 app.use(express.static("public"));
 
 server = http.createServer(app);
-server.listen(8080, "0.0.0.0", (err) => {
+server.listen(8080, getLocalIpAddress(), (err) => {
     if (err !== undefined) {
         console.error(err);
     }
@@ -112,15 +127,16 @@ function playGame(socketId) {
     if (res === undefined) {
         return;
     }
-    if (res === "draw") {
+    else if (res === "draw") {
         clients[socketId]?.emit('message', "Draw", "green");
-        return;
+        clients[oppId]?.emit('message', "Draw", "green");
     }
-    winner = res[0];
-    loser = res[1];
-    clients[winner]?.emit("message", "You won", "green");
-    clients[loser]?.emit("message", "You lose", "green");
-
+    else {
+        winner = res[0];
+        loser = res[1];
+        clients[winner]?.emit("message", "You won", "green");
+        clients[loser]?.emit("message", "You lose", "green");
+    }
     resetGame(socketId, oppId);
 }
 
@@ -149,4 +165,6 @@ function resetGame(id1, id2) {
     clients[id1]?.emit("opponentFound");
     clients[id2]?.emit("resetGame");
     clients[id2]?.emit("opponentFound");
+    matchUps[id1][1] = undefined;
+    matchUps[id2][1] = undefined;
 }
